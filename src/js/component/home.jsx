@@ -7,9 +7,15 @@ const Home = () => {
 	const [todos, setTodos] = useState([])
 	const apiURL = "https://assets.breatheco.de/apis/fake/todos/user/mauroborgesm"
 
-	async function update(todos){
+	async function updateList(e, todos){
+		
+		if(e.key=="Enter"){
+			let myTask={ label: task, done: false }
+		let value = todos;
+		value.push(myTask);
+		
 		let response = await fetch(apiURL,{
-			body:JSON.stringify(todos),
+			body:JSON.stringify(value),
 			method: "PUT",
 			headers:{
 			"Content-Type": "application/json"
@@ -18,13 +24,13 @@ const Home = () => {
 		})
 		
 		if (response.ok) {
-			let data = await response.json()
-			setTodos(data)
+			loadList();
 		}
 		return response.status
 
 	
 	}
+}
 
 	async function loadList() {
 		let response = await fetch(apiURL)
@@ -55,14 +61,15 @@ const Home = () => {
 	
 		
 	}
-
-
+	
 	useEffect(()=>{
 	newList();
-
+	loadList();
 
 
 },[])
+
+
 	return (
 		<>
 	
@@ -75,8 +82,8 @@ const Home = () => {
 							id="exampleFormControlInput1"
 							placeholder="Escribe una tarea"
 							value={task}
-							onChange={(e) => setTask(e.target.value)}
-							onKeyDown={update}
+							onChange={(e) => setTask(  e.target.value)}
+							onKeyDown={(e)=>updateList(e,todos)}
 						/>
 					</div>
 				</div>
@@ -84,7 +91,7 @@ const Home = () => {
 					{todos.map((todo, index) => (
 						<li key={index} className="item list-group-item d-flex justify-content-between align-items-center">
 							<div className="form-check form-switch">
-								<input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={() => checkTodo(index)} checked={todo.done} />
+								<input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"  checked={todo.done} />
 								<label className="form-check-label" htmlFor="flexSwitchCheckDefault">{todo.label}</label>
 							</div>
 							<button onClick={() => delTask(index)} type="button" className="btn btn-sm rounded-pill btn-outline-danger">x</button>
@@ -122,30 +129,6 @@ const Home = () => {
 
 
 
-// function addTask(e) {
-// 	if (e.code == "Enter") {
-// 		//aqui se agrega la tarea
-// 		loadList()
-
-// 		setTodos([...todos, { label: task, done: false }])
-// 		console.log(task)
-// 		update(newTodos)
-// 		setTask("")
-// 	}
-// }
-
-// function delTask(index) {
-// 	//aqui se elimina la tarea
-// 	let newTodos = [...todos]
-// 	newTodos.splice(index, 1)
-// 	setTodos(newTodos)
-// }
-// function checkTodo(index) {
-// 	let newTodos = [...todos]
-// 	newTodos[index].done = !newTodos[index].done
-// 	console.log(todos)
-// 	setTodos(newTodos)
-// }
 
 // return (
 // 	<>
