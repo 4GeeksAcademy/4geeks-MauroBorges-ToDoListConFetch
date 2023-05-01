@@ -7,30 +7,45 @@ const Home = () => {
 	const [todos, setTodos] = useState([])
 	const apiURL = "https://assets.breatheco.de/apis/fake/todos/user/mauroborgesm"
 
-	async function updateList(e, todos){
-		
-		if(e.key=="Enter"){
-			let myTask={ label: task, done: false }
-		let value = todos;
-		value.push(myTask);
-		
-		let response = await fetch(apiURL,{
-			body:JSON.stringify(value),
-			method: "PUT",
-			headers:{
-			"Content-Type": "application/json"
-		}
+	async function updateList(e, todos) {
 
-		})
-		
-		if (response.ok) {
-			loadList();
-		}
-		return response.status
+		if ( e.key == "Enter") {
+			// let value;
+			// if(index != null){
+			// 	deleteList(index)
+			// 	value=todos;
+			// }else{
 
-	
+				let myTask = { label: task, done: false }
+				let value = todos;
+				value.push(myTask);
+			
+
+			let response = await fetch(apiURL, {
+				body: JSON.stringify(value),
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				}
+
+			})
+
+			if (response.ok) {
+				loadList();
+			}
+			return response.status
+
+
+		}
 	}
-}
+	async function deleteList(index) {
+		setTodos(current => [
+			...current.slice(0, index),
+			...current.slice(index + 1, current.length)
+		]);
+		
+		
+	}
 
 	async function loadList() {
 		let response = await fetch(apiURL)
@@ -42,14 +57,14 @@ const Home = () => {
 
 	}
 	async function newList() {
-		 let response = await fetch(apiURL,{
-		 	body:JSON.stringify([]),
-		 	method: "POST",
-		 	headers:{
-		 	"Content-Type": "application/json"
-		 }
+		let response = await fetch(apiURL, {
+			body: JSON.stringify([]),
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			}
 
-		 }).then(response=>console.log(response.json())) 
+		}).then(response => console.log(response.json()))
 		//  .then(res)=>{
 		// 		if (res.ok) {
 		// 			loadList()
@@ -58,21 +73,21 @@ const Home = () => {
 		// 			console.log("No se pudo obtener los datos")
 		// 		}
 		//  })
-	
-		
+
+
 	}
-	
-	useEffect(()=>{
-	newList();
-	loadList();
+
+	useEffect(() => {
+		newList();
+		loadList();
 
 
-},[])
+	}, [])
 
 
 	return (
 		<>
-	
+
 			<p className="fs-1 text-center">ToDo's</p>
 			<div className="card">
 				<div className="card-header">
@@ -82,8 +97,8 @@ const Home = () => {
 							id="exampleFormControlInput1"
 							placeholder="Escribe una tarea"
 							value={task}
-							onChange={(e) => setTask(  e.target.value)}
-							onKeyDown={(e)=>updateList(e,todos)}
+							onChange={(e) => setTask(e.target.value)}
+							onKeyDown={(e) => updateList(e, todos)}
 						/>
 					</div>
 				</div>
@@ -91,10 +106,10 @@ const Home = () => {
 					{todos.map((todo, index) => (
 						<li key={index} className="item list-group-item d-flex justify-content-between align-items-center">
 							<div className="form-check form-switch">
-								<input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"  checked={todo.done} />
+								<input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked={todo.done} />
 								<label className="form-check-label" htmlFor="flexSwitchCheckDefault">{todo.label}</label>
 							</div>
-							<button onClick={() => delTask(index)} type="button" className="btn btn-sm rounded-pill btn-outline-danger">x</button>
+							<button onClick={() => deleteList(index)} type="button" className="btn btn-sm rounded-pill btn-outline-danger">x</button>
 						</li>
 					))}
 				</ul>
