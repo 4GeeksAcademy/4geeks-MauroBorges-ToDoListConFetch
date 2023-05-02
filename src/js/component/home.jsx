@@ -38,13 +38,35 @@ const Home = () => {
 
 		}
 	}
+	// async function deleteList(index) {
+	// 	setTodos(current => [
+	// 		...current.slice(0, index),
+	// 		...current.slice(index + 1, current.length)
+			
+	// 	]);
+		
+		
+	// }
+
 	async function deleteList(index) {
-		setTodos(current => [
-			...current.slice(0, index),
-			...current.slice(index + 1, current.length)
-		]);
-		
-		
+		try {
+			const newTodos = [...todos];
+			newTodos.splice(index, 1);
+	
+			const response = await fetch(apiURL, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(newTodos),
+			});
+			if (!response.ok) {
+				throw new Error("Error al borrar la tarea");
+			}
+			setTodos(newTodos);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	async function loadList() {
